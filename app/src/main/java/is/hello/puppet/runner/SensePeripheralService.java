@@ -11,11 +11,19 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import is.hello.buruberi.bluetooth.Buruberi;
 import is.hello.buruberi.bluetooth.stacks.BluetoothStack;
+import is.hello.buruberi.bluetooth.stacks.util.Operation;
+import is.hello.buruberi.bluetooth.stacks.util.PeripheralCriteria;
 import is.hello.buruberi.util.Either;
 import is.hello.puppet.Intents;
 import is.hello.puppet.bluetooth.sense.SensePeripheral;
+import is.hello.puppet.bluetooth.sense.model.SenseLedAnimation;
+import is.hello.puppet.bluetooth.sense.model.protobuf.SenseCommandProtos.wifi_endpoint;
 import is.hello.puppet.bluetooth.sense.model.protobuf.SenseCommandProtos.wifi_endpoint.sec_type;
 import rx.Observable;
 
@@ -33,7 +41,7 @@ public class SensePeripheralService extends Service {
                 case Intents.ACTION_CONNECT:
                     connect();
                     break;
-                case Intents.ACTION_GET_CONNECTION_STATUS:
+                case Intents.ACTION_PRINT_WIFI_STATUS:
                     printConnectionStatus();
                     break;
                 case Intents.ACTION_SCAN_WIFI:
@@ -50,6 +58,9 @@ public class SensePeripheralService extends Service {
                     break;
                 case Intents.ACTION_FACTORY_RESET:
                     factoryReset();
+                    break;
+                case Intents.ACTION_DISCONNECT:
+                    disconnect();
                     break;
                 default:
                     testOutput.logValidationFailure(intent.getAction(), "Action is unknown, ignoring.");
@@ -129,7 +140,7 @@ public class SensePeripheralService extends Service {
         }
     }
 
-    private <T> void endCommand(@NonNull Either<T, Throwable> result) {
+    private void endCommand(@NonNull Either<String, Throwable> result) {
         if (currentAction != null) {
             testOutput.logEndCommand(currentAction, result);
             this.currentAction = null;
@@ -140,30 +151,59 @@ public class SensePeripheralService extends Service {
         testOutput.logValidationFailure(action, "No Sense currently discovered.");
     }
 
-    private <T> void runSenseCommand(@NonNull String action,
-                                     @NonNull Observable<T> value) {
+    private void runSenseCommand(@NonNull String action,
+                                 @NonNull Observable<String> value) {
+        if (sense == null) {
+            noSense(action);
+            return;
+        }
+
         if (beginCommand(action)) {
-            value.subscribe(v -> endCommand(Either.left(v)),
-                            e -> endCommand(Either.right(e)));
+            final Observable<String> withAnimation = sense.runLedAnimation(SenseLedAnimation.BUSY)
+                                                          .flatMap(ignored -> value)
+                                                          .flatMap(v -> sense.runLedAnimation(SenseLedAnimation.TRIPPY)
+                                                                             .map(ignored -> v));
+
+            withAnimation.subscribe(v -> endCommand(Either.left(v)),
+                                    e -> endCommand(Either.right(e)));
         }
     }
 
     private void discover(@NonNull Intent intent) {
-        final String senseId = getRequiredStringExtra(intent, Intents.EXTRA_SENSE_ID);
-        if (senseId == null) {
-            return;
-        }
+        final String senseId = intent.getStringExtra(Intents.EXTRA_SENSE_ID);
 
         if (!beginCommand(intent.getAction())) {
             return;
         }
 
-        final Observable<SensePeripheral> discover = SensePeripheral.rediscover(bluetoothStack,
-                                                                                senseId,
-                                                                                false);
+        final Observable<SensePeripheral> discover;
+        if (TextUtils.isEmpty(senseId)) {
+            discover = SensePeripheral.discover(bluetoothStack, new PeripheralCriteria())
+                                      .flatMap(peripherals -> {
+                                          if (peripherals.isEmpty()) {
+                                              return Observable.error(new SenseNotFoundException());
+                                          } else {
+                                              final SensePeripheral closest = Collections.max(peripherals, (l, r) -> {
+                                                  final int a = l.getScannedRssi(),
+                                                          b = r.getScannedRssi();
+                                                  return (a < b) ? -1 : ((a > b) ? 1 : 0);
+                                              });
+                                              return Observable.just(closest);
+                                          }
+                                      });
+        } else {
+            discover = SensePeripheral.rediscover(bluetoothStack, senseId, false)
+                                      .flatMap(sensePeripheral -> {
+                                          if (sensePeripheral == null) {
+                                              return Observable.error(new SenseNotFoundException());
+                                          } else {
+                                              return Observable.just(sensePeripheral);
+                                          }
+                                      });
+        }
         discover.subscribe(sense -> {
                                this.sense = sense;
-                               endCommand(Either.left(sense));
+                               endCommand(Either.left(sense.getName()));
                            },
                            e -> endCommand(Either.right(e)));
     }
@@ -174,16 +214,25 @@ public class SensePeripheralService extends Service {
             return;
         }
 
-        runSenseCommand(Intents.ACTION_CONNECT, sense.connect());
+        if (!beginCommand(Intents.ACTION_CONNECT)) {
+            return;
+        }
+
+        final Observable<Operation> connect = sense.connect().last();
+        final Observable<SensePeripheral> withAnimation = connect.flatMap(ignored -> sense.runLedAnimation(SenseLedAnimation.TRIPPY))
+                                                                 .map(ignored -> sense);
+        withAnimation.subscribe(v -> endCommand(Either.left(v.getName())),
+                                e -> endCommand(Either.right(e)));
     }
 
     private void printConnectionStatus() {
         if (sense == null) {
-            noSense(Intents.ACTION_GET_CONNECTION_STATUS);
+            noSense(Intents.ACTION_PRINT_WIFI_STATUS);
             return;
         }
 
-        runSenseCommand(Intents.ACTION_GET_CONNECTION_STATUS, sense.getWifiNetwork());
+        runSenseCommand(Intents.ACTION_PRINT_WIFI_STATUS, sense.getWifiNetwork()
+                                                               .map(s -> s.ssid));
     }
 
     private void scanWiFiNetworks() {
@@ -192,7 +241,15 @@ public class SensePeripheralService extends Service {
             return;
         }
 
-        runSenseCommand(Intents.ACTION_SCAN_WIFI, sense.scanForWifiNetworks());
+        final Observable<List<wifi_endpoint>> scan = sense.scanForWifiNetworks();
+        final Observable<String> prettyScan = scan.map(networks -> {
+            final List<String> ssids = new ArrayList<>();
+            for (wifi_endpoint network : networks) {
+                ssids.add(network.getSsid());
+            }
+            return TextUtils.join(", ", ssids);
+        });
+        runSenseCommand(Intents.ACTION_SCAN_WIFI, prettyScan);
     }
 
     private void connectToWiFiNetwork(@NonNull Intent intent) {
@@ -217,7 +274,9 @@ public class SensePeripheralService extends Service {
             return;
         }
 
-        runSenseCommand(Intents.ACTION_CONNECT_WIFI, sense.connectToWiFiNetwork(ssid, securityType, password));
+        runSenseCommand(Intents.ACTION_CONNECT_WIFI, sense.connectToWiFiNetwork(ssid, securityType, password)
+                                                          .last()
+                                                          .map(ignored -> ssid));
     }
 
     private void linkAccount(@NonNull Intent intent) {
@@ -231,7 +290,8 @@ public class SensePeripheralService extends Service {
             return;
         }
 
-        runSenseCommand(Intents.ACTION_LINK_ACCOUNT, sense.linkAccount(accountToken));
+        runSenseCommand(Intents.ACTION_LINK_ACCOUNT, sense.linkAccount(accountToken)
+                                                          .map(ignored -> accountToken));
     }
 
     private void pairPill(@NonNull Intent intent) {
@@ -254,7 +314,22 @@ public class SensePeripheralService extends Service {
             return;
         }
 
-        runSenseCommand(Intents.ACTION_FACTORY_RESET, sense.factoryReset());
+        runSenseCommand(Intents.ACTION_FACTORY_RESET, sense.factoryReset()
+                                                           .map(ignored -> ""));
+    }
+
+    private void disconnect() {
+        if (!beginCommand(Intents.ACTION_DISCONNECT)) {
+            return;
+        }
+
+        if (sense != null) {
+            final Observable<SensePeripheral> disconnect = sense.disconnect();
+            disconnect.subscribe(v -> endCommand(Either.left(v.getName())),
+                                 e -> endCommand(Either.right(e)));
+        } else {
+            endCommand(Either.left(""));
+        }
     }
 
     //endregion

@@ -7,7 +7,7 @@ public class Intents {
     public static final String EXTRA_SENSE_ID = "sense_id";
 
     public static final String ACTION_CONNECT = "is.hello.puppet.ACTION_CONNECT";
-    public static final String ACTION_GET_CONNECTION_STATUS = "is.hello.puppet.ACTION_GET_CONNECTION_STATUS";
+    public static final String ACTION_PRINT_WIFI_STATUS = "is.hello.puppet.ACTION_PRINT_WIFI_STATUS";
     public static final String ACTION_SCAN_WIFI = "is.hello.puppet.ACTION_SCAN_WIFI";
     public static final String ACTION_CONNECT_WIFI = "is.hello.puppet.ACTION_CONNECT_WIFI";
     public static final String EXTRA_WIFI_SSID = "wifi_ssid";
@@ -20,15 +20,18 @@ public class Intents {
     public static final String ACTION_PAIR_PILL = "is.hello.puppet.ACTION_PAIR_PILL";
     public static final String ACTION_FACTORY_RESET = "is.hello.puppet.ACTION_FACTORY_RESET";
 
+    public static final String ACTION_DISCONNECT = "is.hello.puppet.ACTION_DISCONNECT";
+
     public static final IntentFilter ALL_ACTIONS = new IntentFilter();
     static {
-        ALL_ACTIONS.addAction(Intents.ACTION_DISCOVER);
-        ALL_ACTIONS.addAction(Intents.ACTION_CONNECT);
-        ALL_ACTIONS.addAction(Intents.ACTION_GET_CONNECTION_STATUS);
-        ALL_ACTIONS.addAction(Intents.ACTION_SCAN_WIFI);
-        ALL_ACTIONS.addAction(Intents.ACTION_CONNECT_WIFI);
-        ALL_ACTIONS.addAction(Intents.ACTION_LINK_ACCOUNT);
-        ALL_ACTIONS.addAction(Intents.ACTION_PAIR_PILL);
-        ALL_ACTIONS.addAction(Intents.ACTION_FACTORY_RESET);
+        ALL_ACTIONS.addAction(ACTION_DISCOVER);
+        ALL_ACTIONS.addAction(ACTION_CONNECT);
+        ALL_ACTIONS.addAction(ACTION_PRINT_WIFI_STATUS);
+        ALL_ACTIONS.addAction(ACTION_SCAN_WIFI);
+        ALL_ACTIONS.addAction(ACTION_CONNECT_WIFI);
+        ALL_ACTIONS.addAction(ACTION_LINK_ACCOUNT);
+        ALL_ACTIONS.addAction(ACTION_PAIR_PILL);
+        ALL_ACTIONS.addAction(ACTION_FACTORY_RESET);
+        ALL_ACTIONS.addAction(ACTION_DISCONNECT);
     }
 }
