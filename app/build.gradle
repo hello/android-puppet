@@ -1,0 +1,42 @@
+import java.text.SimpleDateFormat
+
+def BURUBERI_VERSION = '0.1.0'
+
+apply plugin: 'com.android.application'
+
+def generateVersionCode() {
+    def now = new Date()
+    def formatter = new SimpleDateFormat("yyMMddHH")
+    Integer.parseInt(formatter.format(now))
+}
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        applicationId "is.hello.puppet"
+        minSdkVersion 19
+        targetSdkVersion 22
+        versionCode generateVersionCode()
+        versionName "0.1.0"
+    }
+    buildTypes {
+        def TYPE_STRING = "String"
+
+        debug {
+            buildConfigField TYPE_STRING, "BURUBERI_VERSION", '"' + BURUBERI_VERSION + '"'
+        }
+        release {
+            buildConfigField TYPE_STRING, "BURUBERI_VERSION", '"' + BURUBERI_VERSION + '"'
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile "is.hello.buruberi:core:$BURUBERI_VERSION"
+}
