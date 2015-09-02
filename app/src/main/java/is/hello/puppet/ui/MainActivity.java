@@ -1,10 +1,13 @@
-package is.hello.puppet;
+package is.hello.puppet.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import is.hello.puppet.BuildConfig;
+import is.hello.puppet.R;
 
 public class MainActivity extends Activity {
     @Override

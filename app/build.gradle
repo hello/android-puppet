@@ -54,10 +54,14 @@ android {
 }
 
 dependencies {
+    compile 'com.android.support:support-v4:23.0.0'
+
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'net.danlew:android.joda:2.7.2'
+
     compile 'io.reactivex:rxjava:1.0.9'
+
     compile "is.hello.buruberi:core:$BURUBERI_VERSION"
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
