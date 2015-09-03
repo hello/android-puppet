@@ -30,6 +30,12 @@ import rx.Observable;
 public class SensePeripheralService extends Service {
     public static final String OUTPUT_LOG_TAG = SensePeripheralService.class.getSimpleName();
 
+    private static boolean running = false;
+
+    public static boolean isRunning() {
+        return running;
+    }
+
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -87,6 +93,8 @@ public class SensePeripheralService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        SensePeripheralService.running = true;
+
         Log.v(OUTPUT_LOG_TAG, "onCreate()");
 
         this.bluetoothStack = new Buruberi()
@@ -104,6 +112,8 @@ public class SensePeripheralService extends Service {
         super.onDestroy();
 
         Log.v(OUTPUT_LOG_TAG, "onDestroy()");
+
+        SensePeripheralService.running = false;
 
         LocalBroadcastManager.getInstance(this)
                              .unregisterReceiver(receiver);

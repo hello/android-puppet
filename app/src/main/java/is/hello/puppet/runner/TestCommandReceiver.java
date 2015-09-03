@@ -13,6 +13,10 @@ public class TestCommandReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.v(getClass().getSimpleName(), "onReceive(" + intent + ")");
 
+        if (!SensePeripheralService.isRunning()) {
+            throw new IllegalStateException("Received command without service running.");
+        }
+
         if (Intents.ALL_ACTIONS.hasAction(intent.getAction())) {
             LocalBroadcastManager.getInstance(context)
                                  .sendBroadcast(intent);
