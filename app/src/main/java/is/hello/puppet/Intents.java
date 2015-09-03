@@ -72,6 +72,23 @@ public final class Intents {
      */
     public static final String ACTION_DISCONNECT = "is.hello.puppet.ACTION_DISCONNECT";
 
+    /**
+     * Clears the currently selected peripheral. Should not be issued until all
+     * running commands have emitted an <code>end_command</code> event.
+     * <p>
+     * <b>Input:</b>
+     * Nothing.
+     * <p>
+     * <b>Output:</b>
+     * Nothing.
+     * <p>
+     * <b>Preconditions:</b>
+     * No commands may be running.
+     * <p>
+     * Literal value is <code>is.hello.puppet.ACTION_RESET</code>
+     */
+    public static final String ACTION_RESET = "is.hello.puppet.ACTION_RESET";
+
     //endregion
 
 
@@ -226,6 +243,7 @@ public final class Intents {
         ALL_ACTIONS.addAction(ACTION_DISCOVER);
         ALL_ACTIONS.addAction(ACTION_CONNECT);
         ALL_ACTIONS.addAction(ACTION_DISCONNECT);
+        ALL_ACTIONS.addAction(ACTION_RESET);
 
         ALL_ACTIONS.addAction(ACTION_PRINT_WIFI_NETWORK);
         ALL_ACTIONS.addAction(ACTION_SCAN_WIFI);

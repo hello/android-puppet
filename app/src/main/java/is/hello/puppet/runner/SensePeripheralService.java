@@ -47,6 +47,13 @@ public class SensePeripheralService extends Service {
                 case Intents.ACTION_CONNECT:
                     connect();
                     break;
+                case Intents.ACTION_RESET:
+                    reset();
+                    break;
+                case Intents.ACTION_DISCONNECT:
+                    disconnect();
+                    break;
+
                 case Intents.ACTION_PRINT_WIFI_NETWORK:
                     printConnectionStatus();
                     break;
@@ -56,6 +63,7 @@ public class SensePeripheralService extends Service {
                 case Intents.ACTION_CONNECT_WIFI:
                     connectToWiFiNetwork(intent);
                     break;
+
                 case Intents.ACTION_LINK_ACCOUNT:
                     linkAccount(intent);
                     break;
@@ -65,9 +73,7 @@ public class SensePeripheralService extends Service {
                 case Intents.ACTION_FACTORY_RESET:
                     factoryReset();
                     break;
-                case Intents.ACTION_DISCONNECT:
-                    disconnect();
-                    break;
+
                 default:
                     testOutput.logValidationFailure(intent.getAction(), "Action is unknown, ignoring.");
                     break;
@@ -233,6 +239,19 @@ public class SensePeripheralService extends Service {
                                                                  .map(ignored -> sense);
         withAnimation.subscribe(v -> endCommand(Either.left(v.getName())),
                                 e -> endCommand(Either.right(e)));
+    }
+
+    private void reset() {
+        if (this.currentAction != null) {
+            testOutput.logValidationFailure(Intents.ACTION_RESET, "Cannot reset when a command is running.");
+            return;
+        }
+
+        if (beginCommand(Intents.ACTION_RESET)) {
+            this.sense = null;
+
+            endCommand(Either.left(""));
+        }
     }
 
     private void printConnectionStatus() {

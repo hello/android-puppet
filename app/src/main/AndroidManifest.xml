@@ -32,13 +32,16 @@
 
                 <action android:name="is.hello.puppet.ACTION_DISCOVER" />
                 <action android:name="is.hello.puppet.ACTION_CONNECT" />
+                <action android:name="is.hello.puppet.ACTION_DISCONNECT" />
+                <action android:name="is.hello.puppet.ACTION_RESET" />
+
                 <action android:name="is.hello.puppet.ACTION_PRINT_WIFI_NETWORK" />
                 <action android:name="is.hello.puppet.ACTION_SCAN_WIFI" />
                 <action android:name="is.hello.puppet.ACTION_CONNECT_WIFI" />
+
                 <action android:name="is.hello.puppet.ACTION_LINK_ACCOUNT" />
                 <action android:name="is.hello.puppet.ACTION_PAIR_PILL" />
                 <action android:name="is.hello.puppet.ACTION_FACTORY_RESET" />
-                <action android:name="is.hello.puppet.ACTION_DISCONNECT" />
 
             </intent-filter>
 
