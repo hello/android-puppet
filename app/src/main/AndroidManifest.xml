@@ -32,7 +32,7 @@
 
                 <action android:name="is.hello.puppet.ACTION_DISCOVER" />
                 <action android:name="is.hello.puppet.ACTION_CONNECT" />
-                <action android:name="is.hello.puppet.ACTION_PRINT_WIFI_STATUS" />
+                <action android:name="is.hello.puppet.ACTION_PRINT_WIFI_NETWORK" />
                 <action android:name="is.hello.puppet.ACTION_SCAN_WIFI" />
                 <action android:name="is.hello.puppet.ACTION_CONNECT_WIFI" />
                 <action android:name="is.hello.puppet.ACTION_LINK_ACCOUNT" />

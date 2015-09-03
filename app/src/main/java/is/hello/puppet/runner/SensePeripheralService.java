@@ -41,7 +41,7 @@ public class SensePeripheralService extends Service {
                 case Intents.ACTION_CONNECT:
                     connect();
                     break;
-                case Intents.ACTION_PRINT_WIFI_STATUS:
+                case Intents.ACTION_PRINT_WIFI_NETWORK:
                     printConnectionStatus();
                     break;
                 case Intents.ACTION_SCAN_WIFI:
@@ -227,11 +227,11 @@ public class SensePeripheralService extends Service {
 
     private void printConnectionStatus() {
         if (sense == null) {
-            noSense(Intents.ACTION_PRINT_WIFI_STATUS);
+            noSense(Intents.ACTION_PRINT_WIFI_NETWORK);
             return;
         }
 
-        runSenseCommand(Intents.ACTION_PRINT_WIFI_STATUS, sense.getWifiNetwork()
+        runSenseCommand(Intents.ACTION_PRINT_WIFI_NETWORK, sense.getWifiNetwork()
                                                                .map(s -> s.ssid));
     }
 
@@ -280,8 +280,8 @@ public class SensePeripheralService extends Service {
     }
 
     private void linkAccount(@NonNull Intent intent) {
-        final String accountToken = getRequiredStringExtra(intent, Intents.EXTRA_ACCOUNT_TOKEN);
-        if (accountToken == null) {
+        final String accessToken = getRequiredStringExtra(intent, Intents.EXTRA_ACCESS_TOKEN);
+        if (accessToken == null) {
             return;
         }
 
@@ -290,13 +290,13 @@ public class SensePeripheralService extends Service {
             return;
         }
 
-        runSenseCommand(Intents.ACTION_LINK_ACCOUNT, sense.linkAccount(accountToken)
-                                                          .map(ignored -> accountToken));
+        runSenseCommand(Intents.ACTION_LINK_ACCOUNT, sense.linkAccount(accessToken)
+                                                          .map(ignored -> accessToken));
     }
 
     private void pairPill(@NonNull Intent intent) {
-        final String accountToken = getRequiredStringExtra(intent, Intents.EXTRA_ACCOUNT_TOKEN);
-        if (accountToken == null) {
+        final String accessToken = getRequiredStringExtra(intent, Intents.EXTRA_ACCESS_TOKEN);
+        if (accessToken == null) {
             return;
         }
 
@@ -305,7 +305,7 @@ public class SensePeripheralService extends Service {
             return;
         }
 
-        runSenseCommand(Intents.ACTION_PAIR_PILL, sense.pairPill(accountToken));
+        runSenseCommand(Intents.ACTION_PAIR_PILL, sense.pairPill(accessToken));
     }
 
     private void factoryReset() {
