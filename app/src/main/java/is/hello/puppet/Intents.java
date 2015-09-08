@@ -2,7 +2,7 @@ package is.hello.puppet;
 
 import android.content.IntentFilter;
 
-import is.hello.puppet.bluetooth.sense.model.protobuf.SenseCommandProtos.wifi_endpoint.sec_type;
+import is.hello.commonsense.bluetooth.model.protobuf.SenseCommandProtos.wifi_endpoint.sec_type;
 
 /**
  * The actions and their extras exposed by the Puppet application.

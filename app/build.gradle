@@ -1,6 +1,7 @@
 import java.text.SimpleDateFormat
 
 def BURUBERI_VERSION = '0.1.0'
+def COMMON_SENSE_VERSION = '0.1.0-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -39,9 +40,11 @@ android {
 
         debug {
             buildConfigField TYPE_STRING, "BURUBERI_VERSION", '"' + BURUBERI_VERSION + '"'
+            buildConfigField TYPE_STRING, "COMMON_SENSE_VERSION", '"' + COMMON_SENSE_VERSION + '"'
         }
         release {
             buildConfigField TYPE_STRING, "BURUBERI_VERSION", '"' + BURUBERI_VERSION + '"'
+            buildConfigField TYPE_STRING, "COMMON_SENSE_VERSION", '"' + COMMON_SENSE_VERSION + '"'
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -57,6 +60,7 @@ dependencies {
     compile 'com.android.support:support-v4:23.0.0'
     compile 'io.reactivex:rxjava:1.0.9'
     compile "is.hello.buruberi:core:$BURUBERI_VERSION"
+    compile "is.hello.commonsense:ble:$COMMON_SENSE_VERSION"
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 

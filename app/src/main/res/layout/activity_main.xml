@@ -27,6 +27,14 @@
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
 
     <TextView
+        android:id="@+id/activity_main_common_sense_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/gap_medium"
+        android:text="@string/info_common_sense_version"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
+
+    <TextView
         android:id="@+id/activity_main_app_version_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

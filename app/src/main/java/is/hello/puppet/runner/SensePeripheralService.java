@@ -20,11 +20,11 @@ import is.hello.buruberi.bluetooth.stacks.BluetoothStack;
 import is.hello.buruberi.bluetooth.stacks.util.Operation;
 import is.hello.buruberi.bluetooth.stacks.util.PeripheralCriteria;
 import is.hello.buruberi.util.Either;
+import is.hello.commonsense.bluetooth.SensePeripheral;
+import is.hello.commonsense.bluetooth.model.SenseLedAnimation;
+import is.hello.commonsense.bluetooth.model.protobuf.SenseCommandProtos.wifi_endpoint;
+import is.hello.commonsense.bluetooth.model.protobuf.SenseCommandProtos.wifi_endpoint.sec_type;
 import is.hello.puppet.Intents;
-import is.hello.puppet.bluetooth.sense.SensePeripheral;
-import is.hello.puppet.bluetooth.sense.model.SenseLedAnimation;
-import is.hello.puppet.bluetooth.sense.model.protobuf.SenseCommandProtos.wifi_endpoint;
-import is.hello.puppet.bluetooth.sense.model.protobuf.SenseCommandProtos.wifi_endpoint.sec_type;
 import rx.Observable;
 
 public class SensePeripheralService extends Service {

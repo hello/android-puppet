@@ -3,6 +3,7 @@
 
     <string name="main_message">Ready to receive commands over ADB.</string>
     <string name="info_buruberi_version">Buruberi Version: %1$s</string>
+    <string name="info_common_sense_version">Common Sense Version: %1$s</string>
     <string name="info_app_version_name">Sense App Version: %1$s</string>
     <string name="info_app_version_code">App Version Code: %1$s</string>
 </resources>
