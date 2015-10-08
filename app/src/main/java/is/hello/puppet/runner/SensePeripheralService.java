@@ -234,11 +234,13 @@ public class SensePeripheralService extends Service {
             return;
         }
 
+        final Observable<SensePeripheral> removeBond = sense.removeBond();
         final Observable<Operation> connect = sense.connect().last();
-        final Observable<SensePeripheral> withAnimation = connect.flatMap(ignored -> sense.runLedAnimation(SenseLedAnimation.TRIPPY))
-                                                                 .map(ignored -> sense);
-        withAnimation.subscribe(v -> endCommand(Either.left(v.getName())),
-                                e -> endCommand(Either.right(e)));
+        final Observable<SensePeripheral> sequence = removeBond.flatMap(ignored -> connect)
+                                                               .flatMap(ignored -> sense.runLedAnimation(SenseLedAnimation.TRIPPY))
+                                                               .map(ignored -> sense);
+        sequence.subscribe(v -> endCommand(Either.left(v.getName())),
+                           e -> endCommand(Either.right(e)));
     }
 
     private void reset() {
@@ -261,7 +263,7 @@ public class SensePeripheralService extends Service {
         }
 
         runSenseCommand(Intents.ACTION_PRINT_WIFI_NETWORK, sense.getWifiNetwork()
-                                                               .map(s -> s.ssid));
+                                                                .map(s -> s.ssid));
     }
 
     private void scanWiFiNetworks() {
