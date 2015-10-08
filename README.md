@@ -33,7 +33,7 @@ Commands are issued through the application manager via `adb shell`. Commands ta
 	adb shell am broadcast \
 		-p "is.hello.puppet" \
 		-a "<action name>"
-		[-esa <parameter name> "<parameter value>"]
+		[--es <parameter name> "<parameter value>"]
 
 Puppet only supports running one command at a time, reflecting the real world limitations of `suripu-android`. New commands should not be issued until an `end_command` event is observed over logcat.
 
@@ -292,7 +292,7 @@ The following series of commands simulates a typical on-boarding session within 
 adb shell am broadcast \
 	-p "is.hello.puppet" \
 	-a "is.hello.puppet.ACTION_DISCOVER" \
-	-esa sense_id "<Sense device id>"
+	--es sense_id "<Sense device id>"
 
 wait-and-require-no-error
 
@@ -317,23 +317,23 @@ wait-and-require-no-error
 adb shell am broadcast \
 	-p "is.hello.puppet" \
 	-a "is.hello.puppet.ACTION_CONNECT_WIFI" \
-	-esa wifi_ssid "Hello" \
-	-esa wifi_sec_type "SL_SCAN_SEC_TYPE_WPA2" \
-	-esa wifi_password "[redacted]" \
+	--es wifi_ssid "Hello" \
+	--es wifi_sec_type "SL_SCAN_SEC_TYPE_WPA2" \
+	--es wifi_password "[redacted]"
 
 wait-and-require-no-error
 
 adb shell am broadcast \
 	-p "is.hello.puppet" \
 	-a "is.hello.puppet.ACTION_LINK_ACCOUNT" \
-	-esa access_token "<API access token>"
+	--es access_token "<API access token>"
 
 wait-and-require-no-error
 
 adb shell am broadcast \
 	-p "is.hello.puppet" \
 	-a "is.hello.puppet.ACTION_PAIR_PILL" \
-	-esa access_token "<API access token>"
+	--es access_token "<API access token>"
 
 wait-and-require-no-error
 
