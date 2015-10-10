@@ -345,8 +345,13 @@ public class SensePeripheralService extends Service {
             return;
         }
 
-        runSenseCommand(Intents.ACTION_FACTORY_RESET, sense.factoryReset()
-                                                           .map(ignored -> ""));
+        if (beginCommand(Intents.ACTION_FACTORY_RESET)) {
+            final Observable<String> factoryReset = sense.factoryReset().map(ignored -> "");
+            final Observable<String> withAnimation = sense.runLedAnimation(SenseLedAnimation.BUSY)
+                                                          .flatMap(ignored -> factoryReset);
+            withAnimation.subscribe(v -> endCommand(Either.left(v)),
+                                    e -> endCommand(Either.right(e)));
+        }
     }
 
     private void disconnect() {
