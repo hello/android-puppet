@@ -58,7 +58,7 @@ public class SensePeripheralService extends Service {
                     printConnectionStatus();
                     break;
                 case Intents.ACTION_SCAN_WIFI:
-                    scanWiFiNetworks();
+                    scanWiFiNetworks(intent);
                     break;
                 case Intents.ACTION_CONNECT_WIFI:
                     connectToWiFiNetwork(intent);
@@ -266,14 +266,29 @@ public class SensePeripheralService extends Service {
                                                                 .map(s -> s.ssid));
     }
 
-    private void scanWiFiNetworks() {
+    private void scanWiFiNetworks(@NonNull Intent intent) {
         if (sense == null) {
             noSense(Intents.ACTION_SCAN_WIFI);
             return;
         }
 
-        final Observable<List<wifi_endpoint>> scan =
-                sense.scanForWifiNetworks(SensePeripheral.CountryCodes.US);
+
+        final String rawCountryCode = intent.getStringExtra(Intents.EXTRA_WIFI_COUNTRY_CODE);
+        final SensePeripheral.CountryCodes countryCode;
+        if (rawCountryCode == null) {
+            countryCode = null; // Use default
+        } else if (rawCountryCode.equals("US")) {
+            countryCode = SensePeripheral.CountryCodes.US;
+        } else if (rawCountryCode.equals("EU")) {
+            countryCode = SensePeripheral.CountryCodes.EU;
+        } else if (rawCountryCode.equals("JP")) {
+            countryCode = SensePeripheral.CountryCodes.JP;
+        } else {
+            Log.e(OUTPUT_LOG_TAG, "[ASSERT] Invalid WiFi country code '" + rawCountryCode + "'");
+            return;
+        }
+
+        final Observable<List<wifi_endpoint>> scan = sense.scanForWifiNetworks(countryCode);
         final Observable<String> prettyScan = scan.map(networks -> {
             final List<String> ssids = new ArrayList<>();
             for (wifi_endpoint network : networks) {

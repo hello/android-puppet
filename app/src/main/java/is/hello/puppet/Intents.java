@@ -144,6 +144,20 @@ public final class Intents {
     public static final String ACTION_CONNECT_WIFI = "is.hello.puppet.ACTION_CONNECT_WIFI";
 
     /**
+     * Specifies what country Sense should use the bands for when doing a WiFi scan.
+     * <p>
+     * Possible values are:
+     * <ol>
+     *     <li>US</li>
+     *     <li>EU</li>
+     *     <li>JP</li>
+     * </ol>
+     * <p>
+     * Literal value is <code>wifi_country_code</code>
+     */
+    public static final String EXTRA_WIFI_COUNTRY_CODE = "wifi_country_code";
+
+    /**
      * A WiFi network SSID. Required to issue a connection attempt.
      * <p>
      * Literal value is <code>wifi_ssid</code>

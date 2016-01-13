@@ -135,13 +135,25 @@ A Sense must be selected by `ACTION_DISCOVER`.
 Performs a WiFi network scan on the selected Sense.
 
 **Input:**
-Nothing.
+The extra `wifi_country_code` may be specified.
 
 **Output:**
 A comma-separated string containing the SSIDs of the networks scanned by Sense.
 
 **Preconditions:**
 A Sense must be selected by `ACTION_DISCOVER`.
+
+---
+
+`wifi_country_code` (param)
+
+Specifies what country Sense should use the bands for when doing a WiFi scan.
+
+Possible values are:
+
+* US
+* EU
+* JP
 
 ---
 
@@ -310,7 +322,8 @@ wait-and-require-no-error
 
 adb shell am broadcast \
 	-p "is.hello.puppet" \
-	-a "is.hello.puppet.ACTION_SCAN_WIFI"
+	-a "is.hello.puppet.ACTION_SCAN_WIFI" \
+	--es wifi_country_code "US"
 
 wait-and-require-no-error
 
