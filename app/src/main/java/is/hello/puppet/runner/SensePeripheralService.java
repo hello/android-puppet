@@ -272,7 +272,8 @@ public class SensePeripheralService extends Service {
             return;
         }
 
-        final Observable<List<wifi_endpoint>> scan = sense.scanForWifiNetworks();
+        final Observable<List<wifi_endpoint>> scan =
+                sense.scanForWifiNetworks(SensePeripheral.CountryCodes.US);
         final Observable<String> prettyScan = scan.map(networks -> {
             final List<String> ssids = new ArrayList<>();
             for (wifi_endpoint network : networks) {
