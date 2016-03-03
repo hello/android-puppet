@@ -17,13 +17,13 @@ import java.util.List;
 
 import is.hello.buruberi.bluetooth.Buruberi;
 import is.hello.buruberi.bluetooth.stacks.BluetoothStack;
-import is.hello.buruberi.bluetooth.stacks.util.Operation;
 import is.hello.buruberi.bluetooth.stacks.util.PeripheralCriteria;
 import is.hello.buruberi.util.Either;
 import is.hello.commonsense.bluetooth.SensePeripheral;
 import is.hello.commonsense.bluetooth.model.SenseLedAnimation;
 import is.hello.commonsense.bluetooth.model.protobuf.SenseCommandProtos.wifi_endpoint;
 import is.hello.commonsense.bluetooth.model.protobuf.SenseCommandProtos.wifi_endpoint.sec_type;
+import is.hello.commonsense.util.ConnectProgress;
 import is.hello.puppet.Intents;
 import rx.Observable;
 
@@ -235,7 +235,7 @@ public class SensePeripheralService extends Service {
         }
 
         final Observable<SensePeripheral> removeBond = sense.removeBond();
-        final Observable<Operation> connect = sense.connect().last();
+        final Observable<ConnectProgress> connect = sense.connect().last();
         final Observable<SensePeripheral> sequence = removeBond.flatMap(ignored -> connect)
                                                                .flatMap(ignored -> sense.runLedAnimation(SenseLedAnimation.TRIPPY))
                                                                .map(ignored -> sense);
@@ -274,15 +274,15 @@ public class SensePeripheralService extends Service {
 
 
         final String rawCountryCode = intent.getStringExtra(Intents.EXTRA_WIFI_COUNTRY_CODE);
-        final SensePeripheral.CountryCodes countryCode;
+        final SensePeripheral.CountryCode countryCode;
         if (rawCountryCode == null) {
             countryCode = null; // Use default
         } else if (rawCountryCode.equals("US")) {
-            countryCode = SensePeripheral.CountryCodes.US;
+            countryCode = SensePeripheral.CountryCode.US;
         } else if (rawCountryCode.equals("EU")) {
-            countryCode = SensePeripheral.CountryCodes.EU;
+            countryCode = SensePeripheral.CountryCode.EU;
         } else if (rawCountryCode.equals("JP")) {
-            countryCode = SensePeripheral.CountryCodes.JP;
+            countryCode = SensePeripheral.CountryCode.JP;
         } else {
             Log.e(OUTPUT_LOG_TAG, "[ASSERT] Invalid WiFi country code '" + rawCountryCode + "'");
             return;
