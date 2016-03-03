@@ -1,7 +1,7 @@
 import java.text.SimpleDateFormat
 
 def BURUBERI_VERSION = '0.9.1'
-def COMMON_SENSE_VERSION = '2016.2.12.1'
+def COMMON_SENSE_VERSION = '2016.3.3.1'
 
 buildscript {
     repositories {
