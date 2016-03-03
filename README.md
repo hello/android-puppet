@@ -362,3 +362,7 @@ adb shell am broadcast \
 
 wait-and-require-no-error
 ```
+
+### Other
+
+See https://developer.chrome.com/apps/bluetooth
