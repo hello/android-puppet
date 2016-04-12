@@ -194,7 +194,7 @@ public class SensePeripheralService extends Service {
 
         final Observable<SensePeripheral> discover;
         if (TextUtils.isEmpty(senseId)) {
-            PeripheralCriteria criteria = new PeripheralCriteria();
+            final PeripheralCriteria criteria = new PeripheralCriteria();
             criteria.setLimit(1);
             criteria.setWantsHighPowerPreScan(true);
             discover = SensePeripheral.discover(bluetoothStack, criteria)
