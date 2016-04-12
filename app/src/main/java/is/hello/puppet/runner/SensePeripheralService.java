@@ -194,9 +194,11 @@ public class SensePeripheralService extends Service {
 
         final Observable<SensePeripheral> discover;
         if (TextUtils.isEmpty(senseId)) {
-            discover = SensePeripheral.discover(bluetoothStack, new PeripheralCriteria())
-                                      .flatMap(peripherals -> {
-                                          if (peripherals.isEmpty()) {
+            PeripheralCriteria criteria = new PeripheralCriteria();
+            criteria.setLimit(1);
+            criteria.setWantsHighPowerPreScan(true);
+            discover = SensePeripheral.discover(bluetoothStack, criteria)
+                                      .flatMap(peripherals -> {if (peripherals.isEmpty()) {
                                               return Observable.error(new SenseNotFoundException());
                                           } else {
                                               final SensePeripheral closest = Collections.max(peripherals, (l, r) -> {
