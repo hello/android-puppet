@@ -11,6 +11,7 @@ import is.hello.puppet.R;
 public class MainActivity extends Activity {
 
     private static final int PERMISSION_LOC_CODE = 0x10d;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
